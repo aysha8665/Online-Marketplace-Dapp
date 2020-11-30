@@ -5,12 +5,13 @@ class StoreOwnerDashboard extends Component {
   render() {
     return (
         <div id="store-owner">
+
           <h1>Store Owner Dashboard</h1>
           <h2>Manage Stores and Products</h2>
           <form onSubmit={(event) => {
             event.preventDefault()
             const storeName = this.storeName.value
-            this.props.addStore(address)
+            this.props.addStore(storeName)
             }}>
             <div className="form-group mr-sm-2">
             <input
@@ -20,8 +21,9 @@ class StoreOwnerDashboard extends Component {
               className="form-control"
               placeholder="Store Name"
               required />
+
             </div>
-            <button type="submit" className="btn btn-primary">Add Store Owner</button>
+            <button type="submit" className="btn btn-primary">Add Store</button>
           </form>
 
           <p>&nbsp;</p>
@@ -33,27 +35,98 @@ class StoreOwnerDashboard extends Component {
               <th scope="col"></th>
             </tr>
           </thead>
-          <tbody id="marketAdminsList">
-            
+          <tbody id="storeList">
             { 
-              this.props.storeOwners.map(storeOwner => {
+              this.props.stores.map(store => {
               return(
-                <tr key={storeOwner}>
-                  <td>{storeOwner}</td>
+                <tr key={store.id}>
+                  <td>{store.name}</td>
+                  <td>{store.owner}</td>
+                  <td>{store.balance}</td>
                   <td>
                     { 
                       <button
-                      address={storeOwner}
+                      storeId={store.id}
                           onClick={(event) => {
-                            this.props.removeStoreOwner(storeOwner)
+                            this.props.withdrawStore(store.id)
+                          }}
+                        >
+                          Withdraw
+                        </button>
+                    }
+                    </td>
+                    <td></td>
+                  <td>
+                    { 
+                      <button
+                      storeId={store.id}
+                          onClick={(event) => {
+                            this.props.removeStore(store.id)
                           }}
                         >
                           Remove
                         </button>
-                      
                     }
                     </td>
+                    <td>
+                      <h2>Manage Products</h2>
+          <form onSubmit={(event) => {
+            event.preventDefault()
+            const productName = this.productName.value
+            const storePrice = this.storePrice.value
+            this.props.addProduct(productName,storePrice,store.id)
+            }}>
+            <div className="form-group mr-sm-2">
+            <input
+              id="productName"
+              type="text"
+              ref={(input) => { this.userAddress = input }}
+              className="form-control"
+              placeholder="Product Name"
+              required />
+              <input
+              id="storePrice"
+              type="text"
+              ref={(input) => { this.userAddress = input }}
+              className="form-control"
+              placeholder="Store Price"
+              required />
+
+            </div>
+            <button type="submit" className="btn btn-primary">Add Store</button>
+          </form>
+
+          <p>&nbsp;</p>
+        <h2>Remove Products</h2>
+                    <tbody id="productList">
+                    { 
+                    this.props.products.map(product => {
+                      return(
+                        <tr key={product}>
+                        <td>{product}</td>
+                        <td>
+                          { 
+                            <button
+                            address={product}
+                                onClick={(event) => {
+                                  this.props.removeProduct(product)
+                                }}
+                              >
+                                Remove
+                              </button>
+                            
+                          }
+                          </td>
+                          </tr>
+                      )
+            
+                  })
+              
+                    }
+                    </tbody>
+                    </td>
                 </tr>
+
               )
             })
           }

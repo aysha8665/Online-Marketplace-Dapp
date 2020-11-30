@@ -124,11 +124,11 @@ using SafeMath for uint256;
   function getStore(uint256 _storeId) 
   public 
   view 
-  returns (string memory name, address owner, uint256 balance) {
+  returns (uint256 id,string memory name, address owner, uint256 balance) {
     name = stores[_storeId].name;
     owner = stores[_storeId].owner;
     balance = stores[_storeId].balance;
-    return (name, owner, balance);
+    return (_storeId,name, owner, balance);
   } 
 
   /// @dev Remove a Store.

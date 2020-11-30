@@ -1,11 +1,13 @@
 import React, { Component } from "react";
-import AdministeredContract from "./contracts/Administered.json";
+import AdministeredContract from "./contracts/Marketplace.json";
+//import AdministeredContract from "./contracts/Administered.json";
 import MarketplaceContract from "./contracts/Marketplace.json";
 import getWeb3 from "./getWeb3";
 
 import "./App.css";
 import AdminDashboard from './dashboard-admin'
 import MarketAdminDashboard from './dashboard-market-admin'
+import StoreOwnerDashboard from './dashboard-store-owner'
 
 class App extends Component {
   constructor(props) {
@@ -17,12 +19,19 @@ class App extends Component {
       administeredContract: null,
       marketAdmins:[],
       storeOwners:[],
+      stores:[],
+      products:[],
       loading:true,
      }
      this.addMarketAdmin = this.addMarketAdmin.bind(this)
      this.removeMarketAdmin = this.removeMarketAdmin.bind(this)
      this.addStoreOwner = this.addStoreOwner.bind(this)
      this.removeStoreOwner = this.removeStoreOwner.bind(this)
+     this.addStore = this.addStore.bind(this)
+     this.removeStore = this.removeStore.bind(this)
+     this.addProduct = this.addStore.bind(this)
+     this.removeProduct = this.removeStore.bind(this)
+     this.withdrawFromStore = this.withdrawFromStore.bind(this)
   }
  
 
@@ -81,7 +90,7 @@ class App extends Component {
     }
     else if(isStoreOwnerTemp)
     {
-      this.setState({userRole:'storeOwner'});
+      this.setState({userRole:'storeOwner'}, this.loadStores);
       this.setState({ loading: false});
     }
     else
@@ -89,7 +98,6 @@ class App extends Component {
       this.setState({ loading: false});
     }
     console.log(this.state.userRole);
-    
 
     // Update state with the result.
     //this.setState({ storageValue: response });
@@ -109,7 +117,14 @@ class App extends Component {
         removeStoreOwner={this.removeStoreOwner}
         />
         if(this.state.userRole==='storeOwner')
-          return <h2>Store Owner</h2>;
+          return <StoreOwnerDashboard 
+          stores={this.state.stores}
+          products={this.state.products}
+          addStore={this.addStore}
+          removeStore={this.removeStore}
+          addProduct={this.addProduct}
+          removeProduct={this.removeProduct}
+          />
       
         //return <h2>User</h2>;
     
@@ -172,15 +187,39 @@ class App extends Component {
 
   };
 
+  addProduct(name,price,storeId){
+    this.setState({loading:true});
+    this.state.administeredContract.methods.addProduct(name,price,storeId).send({from:this.state.accounts[0]})
+    .once('receipt', (receipt) => {
+      this.setState({ loading: false })
+    })
+  };
+
+  removeProduct(productId){
+    this.setState({loading:true});
+    this.state.administeredContract.methods.removeProduct(productId).send({from:this.state.accounts[0]})
+    .once('receipt', (receipt) => {
+      this.setState({ loading: false })
+    })
+  };
+  withdrawFromStore(storeId){
+    this.setState({loading:true});
+    this.state.administeredContract.methods.withdrawStoreBalance(storeId).send({from:this.state.accounts[0]})
+    .once('receipt', (receipt) => {
+      this.setState({ loading: false })
+    })
+  };
+
+
   async loadMarketAdmins()
   {
     this.setState({loading:true});
-    const marketAdminsCount = await this.state.administeredContract.methods.getMarketAdminsCount().call();
+    const marketAdminsCount = await this.state.administeredContract.methods.getMarketAdminsCount().send({from:this.state.accounts[0]});
       //this.setState({ marketAdminsCount })
       // Load products
       console.log(marketAdminsCount);
       for (var i = 0; i < marketAdminsCount; i++) {
-        const marketAdminAddress = await this.state.administeredContract.methods.getMarketAdminMember(i).call()
+        const marketAdminAddress = await this.state.administeredContract.methods.getMarketAdminMember(i).send({from:this.state.accounts[0]})
         this.setState({
           marketAdmins: [...this.state.marketAdmins, marketAdminAddress]
         })
@@ -192,17 +231,34 @@ class App extends Component {
   async loadStoreOwner()
   {
     this.setState({loading:true});
-    const storeOwnersCount = await this.state.administeredContract.methods.getStoreOwnersCount().call();
+    const storeOwnersCount = await this.state.administeredContract.methods.getStoreOwnersCount().send({from:this.state.accounts[0]})
       //this.setState({ marketAdminsCount })
       // Load products
       console.log(storeOwnersCount);
       for (var i = 0; i < storeOwnersCount; i++) {
-        const storeOwnerAddress = await this.state.administeredContract.methods.getStoreOwnerMember(i).call()
+        const storeOwnerAddress = await this.state.administeredContract.methods.getStoreOwnerMember(i).send({from:this.state.accounts[0]})
         this.setState({
           storeOwners: [...this.state.storeOwners, storeOwnerAddress]
         })
       }
       console.log(this.state.storeOwners)
+      this.setState({ loading: false})
+  };
+
+  async loadStores()
+  {
+    this.setState({loading:true});
+    const storesCount = await this.state.administeredContract.methods.getStoreCount().send({from:this.state.accounts[0]})
+      //this.setState({ marketAdminsCount })
+      // Load products
+      console.log(storesCount);
+      for (var i = 0; i < storesCount; i++) {
+        const store = await this.state.administeredContract.methods.getStore(i).send({from:this.state.accounts[0]})
+        this.setState({
+          storeOwners: [...this.state.stores, store]
+        })
+      }
+      console.log(this.state.stores)
       this.setState({ loading: false})
   };
 
@@ -214,10 +270,9 @@ class App extends Component {
       <div className="App">
         <h1>Good to Go!</h1>
         {
-            
-            this.state.loading
-                ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
-                : this.renderDashboard()
+          this.state.loading
+          ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
+          : this.renderDashboard()
         }
       </div>
     );
