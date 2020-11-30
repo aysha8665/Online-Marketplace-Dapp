@@ -10,8 +10,8 @@ class StoreOwnerDashboard extends Component {
           <h2>Manage Stores and Products</h2>
           <form onSubmit={(event) => {
             event.preventDefault()
-            const storeNameConst = this.storeName.value
-            this.props.addStore(storeNameConst)
+            const storeName = this.storeName.value
+            this.props.addStore(storeName)
             }}>
             <div className="form-group mr-sm-2">
             <input

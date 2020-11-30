@@ -215,9 +215,11 @@ class App extends Component {
 
   addStore(name){
     this.setState({loading:true});
-    this.state.marketplaceContract.methods.addStore(name).send({from:this.state.accounts[0]})
+    console.log('name:', name)
+    let result=this.state.marketplaceContract.methods.addStore(name).send({from:this.state.accounts[0]})
     .once('receipt', (receipt) => {
-      
+      console.log('result:',result)
+      console.log('receipt:',receipt)
       this.setState({ loading: false })
     })
 

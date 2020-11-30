@@ -106,6 +106,7 @@ using SafeMath for uint256;
   {
     stores[storeCount] = Store({ id: storeCount,name: _name, owner: msg.sender, balance: 0});
     emit LogStoreAdded(storeCount, _name, msg.sender, 0);
+    //++storeCount;
     storeCount.add(1);
     return true;
   }
