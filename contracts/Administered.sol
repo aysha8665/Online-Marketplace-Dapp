@@ -113,7 +113,6 @@ contract Administered is AccessControl{
   /// @return MarketAdmins Count.
   function getMarketAdminsCount()
   public virtual view 
-  onlyAdmin
   returns (uint)
   {
     return getRoleMemberCount(MARKET_ADMIN_ROLE);
@@ -122,8 +121,7 @@ contract Administered is AccessControl{
   /// @dev get MarketAdminsCount. Restricted to MarketAdmins.
   /// @return StoreOwners Count.
   function getStoreOwnersCount()
-  public virtual view
-  onlyMarketAdmin 
+  public virtual view 
   returns (uint)
   {
     return getRoleMemberCount(STORE_OWNER_ROLE);
@@ -133,7 +131,6 @@ contract Administered is AccessControl{
   /// @return MarketAdmin Member.
   function getMarketAdminMember(uint256 index)
   public virtual view
-  onlyAdmin
   returns (address)
   {
     return getRoleMember(MARKET_ADMIN_ROLE,index);
@@ -142,8 +139,7 @@ contract Administered is AccessControl{
   /// @dev get StoreOwnerMember. Restricted to MarketAdmins.
   /// @return StoreOwners Member.
   function getStoreOwnerMember(uint256 index)
-  public virtual view
-  onlyMarketAdmin 
+  public virtual view 
   returns (address)
   {
     return getRoleMember(STORE_OWNER_ROLE,index);

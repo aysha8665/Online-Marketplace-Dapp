@@ -10,14 +10,14 @@ class StoreOwnerDashboard extends Component {
           <h2>Manage Stores and Products</h2>
           <form onSubmit={(event) => {
             event.preventDefault()
-            const storeName = this.storeName.value
-            this.props.addStore(storeName)
+            const storeNameConst = this.storeName.value
+            this.props.addStore(storeNameConst)
             }}>
             <div className="form-group mr-sm-2">
             <input
               id="storeName"
               type="text"
-              ref={(input) => { this.userAddress = input }}
+              ref={(input) => { this.storeName = input }}
               className="form-control"
               placeholder="Store Name"
               required />
@@ -73,21 +73,21 @@ class StoreOwnerDashboard extends Component {
           <form onSubmit={(event) => {
             event.preventDefault()
             const productName = this.productName.value
-            const storePrice = this.storePrice.value
-            this.props.addProduct(productName,storePrice,store.id)
+            const productPrice = this.productPrice.value
+            this.props.addProduct(productName,productPrice,store.id)
             }}>
             <div className="form-group mr-sm-2">
             <input
               id="productName"
               type="text"
-              ref={(input) => { this.userAddress = input }}
+              ref={(input) => { this.productName = input }}
               className="form-control"
               placeholder="Product Name"
               required />
               <input
-              id="storePrice"
+              id="productPrice"
               type="text"
-              ref={(input) => { this.userAddress = input }}
+              ref={(input) => { this.productPrice = input }}
               className="form-control"
               placeholder="Store Price"
               required />

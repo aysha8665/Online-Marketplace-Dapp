@@ -1,6 +1,6 @@
 import React, { Component } from "react";
+import $ from 'jquery';
 import AdministeredContract from "./contracts/Marketplace.json";
-//import AdministeredContract from "./contracts/Administered.json";
 import MarketplaceContract from "./contracts/Marketplace.json";
 import getWeb3 from "./getWeb3";
 
@@ -17,6 +17,7 @@ class App extends Component {
       userRole:'user',
       accounts: null, 
       administeredContract: null,
+      marketplaceContract: null,
       marketAdmins:[],
       storeOwners:[],
       stores:[],
@@ -46,18 +47,60 @@ class App extends Component {
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = AdministeredContract.networks[networkId];
+      const deployedNetworkAdministeredContract = AdministeredContract.networks[networkId];
+      const deployedNetworkMarketplaceContract = MarketplaceContract.networks[networkId];
+      
       const administeredContractInstance = new web3.eth.Contract(
         AdministeredContract.abi,
-        deployedNetwork && deployedNetwork.address,
+        deployedNetworkAdministeredContract && deployedNetworkAdministeredContract.address,
+      );
+
+      const marketplaceContractInstance = new web3.eth.Contract(
+        MarketplaceContract.abi,
+        deployedNetworkMarketplaceContract && deployedNetworkMarketplaceContract.address,
       );
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
       this.setState({ web3, userRole:'user', accounts, 
       administeredContract: administeredContractInstance,
+      marketplaceContract:marketplaceContractInstance,
       marketAdmins:[],
       loading:true}, this.checkUserRole);
+
+/*
+      var addMarketAdminEvent = this.state.administeredContract.RoleGranted();
+      addMarketAdminEvent.watch(function(error, result){
+        if (!error)
+            {
+                //$("#loader").hide();
+                $("#eventsLog").html(result.args.role + '-' + result.args.account + '-'+ result.args._msgSender);
+            } else {
+                //$("#loader").hide();
+                console.log(error);
+            }
+            */
+           /*marketplaceContractInstance.events.LogStoreAdded.watch(function(error, result){
+             if (!error)
+                 {
+                     //$("#loader").hide();
+                     $("#eventsLog").html(result.args.role + '-' + result.args.account + '-'+ result.args._msgSender);
+                 } else {
+                     //$("#loader").hide();
+                     console.log(error);
+                 }
+
+
+    })*/
+
+    /*marketplaceContractInstance.getPastEvents('LogStoreAdded', {
+      filter: {myIndexedParam: [20,23], myOtherIndexedParam: '0x123456789...'}, // Using an array means OR: e.g. 20 or 23
+      fromBlock: 0,
+      toBlock: 'latest'
+  }, function(error, events){ console.log(events); })
+  .then(function(events){
+      console.log(events) // same results as the optional callback above
+  });*/
       
     } catch (error) {
       // Catch any errors for any of the above operations.
@@ -132,7 +175,9 @@ class App extends Component {
 
   addMarketAdmin(accountAdddress){
     this.setState({loading:true});
-    this.state.administeredContract.methods.addMarketAdmin(accountAdddress).send({from:this.state.accounts[0]})
+     this.state.administeredContract.methods.addMarketAdmin(accountAdddress).send({from:this.state.accounts[0]})
+
+
     .once('receipt', (receipt) => {
       
       this.setState({ loading: false })
@@ -170,7 +215,7 @@ class App extends Component {
 
   addStore(name){
     this.setState({loading:true});
-    this.state.administeredContract.methods.addStore(name).send({from:this.state.accounts[0]})
+    this.state.marketplaceContract.methods.addStore(name).send({from:this.state.accounts[0]})
     .once('receipt', (receipt) => {
       
       this.setState({ loading: false })
@@ -180,7 +225,7 @@ class App extends Component {
 
   removeStore(storeId){
     this.setState({loading:true});
-    this.state.administeredContract.methods.removeStore(storeId).send({from:this.state.accounts[0]})
+    this.state.marketplaceContract.methods.removeStore(storeId).send({from:this.state.accounts[0]})
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })
@@ -189,7 +234,7 @@ class App extends Component {
 
   addProduct(name,price,storeId){
     this.setState({loading:true});
-    this.state.administeredContract.methods.addProduct(name,price,storeId).send({from:this.state.accounts[0]})
+    this.state.marketplaceContract.methods.addProduct(name,price,storeId).send({from:this.state.accounts[0]})
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })
@@ -197,14 +242,14 @@ class App extends Component {
 
   removeProduct(productId){
     this.setState({loading:true});
-    this.state.administeredContract.methods.removeProduct(productId).send({from:this.state.accounts[0]})
+    this.state.marketplaceContract.methods.removeProduct(productId).send({from:this.state.accounts[0]})
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })
   };
   withdrawFromStore(storeId){
     this.setState({loading:true});
-    this.state.administeredContract.methods.withdrawStoreBalance(storeId).send({from:this.state.accounts[0]})
+    this.state.marketplaceContract.methods.withdrawStoreBalance(storeId).send({from:this.state.accounts[0]})
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })
@@ -214,12 +259,12 @@ class App extends Component {
   async loadMarketAdmins()
   {
     this.setState({loading:true});
-    const marketAdminsCount = await this.state.administeredContract.methods.getMarketAdminsCount().send({from:this.state.accounts[0]});
+    const marketAdminsCount = await this.state.administeredContract.methods.getMarketAdminsCount().call();
       //this.setState({ marketAdminsCount })
       // Load products
       console.log(marketAdminsCount);
       for (var i = 0; i < marketAdminsCount; i++) {
-        const marketAdminAddress = await this.state.administeredContract.methods.getMarketAdminMember(i).send({from:this.state.accounts[0]})
+        const marketAdminAddress = await this.state.administeredContract.methods.getMarketAdminMember(i).call();
         this.setState({
           marketAdmins: [...this.state.marketAdmins, marketAdminAddress]
         })
@@ -231,12 +276,12 @@ class App extends Component {
   async loadStoreOwner()
   {
     this.setState({loading:true});
-    const storeOwnersCount = await this.state.administeredContract.methods.getStoreOwnersCount().send({from:this.state.accounts[0]})
+    const storeOwnersCount = await this.state.administeredContract.methods.getStoreOwnersCount().call();
       //this.setState({ marketAdminsCount })
       // Load products
       console.log(storeOwnersCount);
       for (var i = 0; i < storeOwnersCount; i++) {
-        const storeOwnerAddress = await this.state.administeredContract.methods.getStoreOwnerMember(i).send({from:this.state.accounts[0]})
+        const storeOwnerAddress = await this.state.administeredContract.methods.getStoreOwnerMember(i).call();
         this.setState({
           storeOwners: [...this.state.storeOwners, storeOwnerAddress]
         })
@@ -248,12 +293,12 @@ class App extends Component {
   async loadStores()
   {
     this.setState({loading:true});
-    const storesCount = await this.state.administeredContract.methods.getStoreCount().send({from:this.state.accounts[0]})
+    const storesCount = await this.state.marketplaceContract.methods.getStoreCount().call();
       //this.setState({ marketAdminsCount })
       // Load products
       console.log(storesCount);
       for (var i = 0; i < storesCount; i++) {
-        const store = await this.state.administeredContract.methods.getStore(i).send({from:this.state.accounts[0]})
+        const store = await this.state.marketplaceContract.methods.getStore(i).call();
         this.setState({
           storeOwners: [...this.state.stores, store]
         })
@@ -274,6 +319,9 @@ class App extends Component {
           ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
           : this.renderDashboard()
         }
+        <div id="eventsLog">
+
+        </div>
       </div>
     );
   }

@@ -5,7 +5,7 @@ class MarketAdminDashboard extends Component {
   render() {
     return (
         <div id="dashboard-admin">
-          <h1>Admin Market Dashboard</h1>
+          <h1>Market Admin Dashboard</h1>
           <h2>Manage Store Owners</h2>
           <form onSubmit={(event) => {
             event.preventDefault()

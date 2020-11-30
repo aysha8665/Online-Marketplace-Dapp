@@ -116,7 +116,7 @@ using SafeMath for uint256;
   public 
   view 
   returns (uint256) {
-    return storeCount.sub(1);
+    return storeCount;
   } 
 
   /// @dev Get a Store.
@@ -172,6 +172,15 @@ using SafeMath for uint256;
 				products[_productId].storeId
         );
 	}
+
+  /// @dev Get Product Count.
+  /// @return The count of the Products
+  function getProductCount() 
+  public 
+  view 
+  returns (uint256) {
+    return productCount;
+  } 
 
   /// @dev update a product.
   /// @param _productId ID of product to Update 

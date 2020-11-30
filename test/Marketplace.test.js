@@ -66,10 +66,10 @@ describe('with existing Store', () => {
      ///@test {Marketplace#getStore}
 
     it('addStore adds an store.', async () => {
-      const result=await marketplace.getStore(0, { from: storeOwner })
-        assert.equal(result[0], "StoreName", 'the name of the last added Store does not match the expected value')
-        assert.equal(result[1], storeOwner, 'the owner of the last added item does not match the expected value')
-        assert.equal(result[2], 0, 'the balance of the item should be "0"')
+      const result=await marketplace.getStore(0)
+        assert.equal(result[1], "StoreName", 'the name of the last added Store does not match the expected value')
+        assert.equal(result[2], storeOwner, 'the owner of the last added item does not match the expected value')
+        assert.equal(result[3], 0, 'the balance of the item should be "0"')
     });
 });
 
