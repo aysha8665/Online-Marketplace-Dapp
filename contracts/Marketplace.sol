@@ -12,16 +12,16 @@ contract Marketplace is Administered, Pausable, ReentrancyGuard{
 
 using SafeMath for uint256;
   struct Store{
-		int id; 
+		int32 id; 
 		string name;
 		address owner; 
 		uint256 balance; 
 	}
   struct Product{
-    int id;
+    int32 id;
     string name;
     uint256 price;
-    int storeId; 
+    int32 storeId; 
     State state;
     address payable seller;
     address payable buyer;
@@ -31,10 +31,10 @@ using SafeMath for uint256;
     Sold
   }
 
-	mapping (int => Store) private stores; 
-  mapping (int => Product) private products;
-  int private productCount;
-  int private storeCount;
+	mapping (int32 => Store) private stores; 
+  mapping (int32 => Product) private products;
+  int32 private productCount;
+  int32 private storeCount;
 
 
   constructor() public 
@@ -50,37 +50,37 @@ using SafeMath for uint256;
        storeCount=0;
   }
 
-  event LogForSale(int id);
-  event LogSold(int id);
+  event LogForSale(int32 id);
+  event LogSold(int32 id);
   event LogStoreAdded (
-		int id, 
+		int32 id, 
 		string name, 
 		address owner, 
 		uint256 balance);
 
   event LogProductAdded (
-		int id, 
+		int32 id, 
 		string name, 
 		uint256 price, 
-		int storeId);
+		int32 storeId);
   event LogWithdrawStoreBalance(
-    int storeId,
+    int32 storeId,
 		uint256 amount
   );
   event LogPriceUpdated(
-    int id, 
+    int32 id, 
 		uint256 oldPrice, 
 		uint256 newPrice
   );
-  event ProductRemoved(int _productId);
-  event ProductsRemoved(int _storeId);
-  event StoreRemoved(int _storeId);
+  event ProductRemoved(int32 _productId);
+  event ProductsRemoved(int32 _storeId);
+  event StoreRemoved(int32 _storeId);
 
 
-  modifier forSale(int _productId){require(products[_productId].state == State.ForSale && products[_productId].price >= 0); _;}
-  modifier sold(int _productId){require(products[_productId].state == State.Sold && products[_productId].buyer != address(0)); _;}
+  modifier forSale(int32 _productId){require(products[_productId].state == State.ForSale && products[_productId].price >= 0); _;}
+  modifier sold(int32 _productId){require(products[_productId].state == State.Sold && products[_productId].buyer != address(0)); _;}
   modifier paidEnough(uint256 _price) { require(msg.value >= _price); _;}
-  modifier checkValue(int _productId) {
+  modifier checkValue(int32 _productId) {
     //refund them after pay for item (why it is before, _ checks for logic before func)
     _;
     uint256 _price = products[_productId].price;
@@ -88,7 +88,7 @@ using SafeMath for uint256;
     products[_productId].buyer.transfer(amountToRefund);
   }
   
-  modifier onlyOwnerOfThisStore(int _storeId)
+  modifier onlyOwnerOfThisStore(int32 _storeId)
   {
     require(stores[_storeId].owner == msg.sender, "Restricted to StoreOwner.");
     _;
@@ -116,16 +116,16 @@ using SafeMath for uint256;
   function getStoreCount() 
   public 
   view 
-  returns (int) {
+  returns (int32) {
     return storeCount;
   } 
 
   /// @dev Get a Store.
 	/// @param _storeId ID of Store to Get 
-  function getStore(int _storeId) 
+  function getStore(int32 _storeId) 
   public 
   view 
-  returns (int id,string memory name, address owner, uint256 balance) {
+  returns (int32 id,string memory name, address owner, uint256 balance) {
     name = stores[_storeId].name;
     owner = stores[_storeId].owner;
     balance = stores[_storeId].balance;
@@ -134,7 +134,7 @@ using SafeMath for uint256;
 
   /// @dev Remove a Store.
 	/// @param _storeId ID of Store to Remove 
-  function removeStore(int _storeId)
+  function removeStore(int32 _storeId)
   onlyStoreOwner
   whenNotPaused
   public
@@ -148,7 +148,7 @@ using SafeMath for uint256;
 	/// @param _name Name of product to Add 
   /// @param _price Price ID for product 
   /// @param _storeId Store ID for product to Add 
-  function addProduct(string memory _name,uint256 _price,int  _storeId)
+  function addProduct(string memory _name,uint256 _price,int32  _storeId)
     onlyStoreOwner
     whenNotPaused
     public
@@ -164,10 +164,10 @@ using SafeMath for uint256;
 
   /// @dev Get a product.
 	/// @param _productId ID of product to Get 
-  function getProduct(int _productId)
+  function getProduct(int32 _productId)
 	view 
 	public
-	returns (string memory, uint256, int) {
+	returns (string memory, uint256, int32) {
 
 		return ( products[_productId].name,
 				products[_productId].price,
@@ -180,7 +180,7 @@ using SafeMath for uint256;
   function getProductCount() 
   public 
   view 
-  returns (int) {
+  returns (int32) {
     return productCount;
   } 
 
@@ -188,7 +188,7 @@ using SafeMath for uint256;
   /// @param _productId ID of product to Update 
   /// @param _price New Price ID for product 
   /// @param _storeId Store ID for product to Update 
-  function updateProduct(int _productId, uint256 _price, int _storeId) 
+  function updateProduct(int32 _productId, uint256 _price, int32 _storeId) 
   onlyStoreOwner
   onlyOwnerOfThisStore(_storeId)
   whenNotPaused
@@ -201,7 +201,7 @@ using SafeMath for uint256;
   /// @dev Removes a product.
 	/// @param _storeId Store ID for product to remove 
 	/// @param _productId ID of product to remove 
-  function removeProduct(int _productId,int _storeId)
+  function removeProduct(int32 _productId,int32 _storeId)
   onlyStoreOwner
   onlyOwnerOfThisStore(_storeId)
   whenNotPaused
@@ -213,13 +213,13 @@ using SafeMath for uint256;
 
   /// @dev Removes products from store.
 	/// @param _storeId Storefront ID for products to remove 
-  function removeStoreProducts(int _storeId)
+  function removeStoreProducts(int32 _storeId)
   onlyStoreOwner
   onlyOwnerOfThisStore(_storeId)
   whenNotPaused
   public
   {
-		for(int i=0; i<productCount; i+1) {
+		for(int32 i=0; i<productCount; i+1) {
 			if ( products[i].storeId == _storeId) {
 				delete products[i];
 				emit ProductRemoved(products[i].id);
@@ -231,7 +231,7 @@ using SafeMath for uint256;
   /// @dev Purchase a product.
   /// @param _productId ID of product to Purchase 
   /// @return The Product Purchased
-  function purchaseProduct(int _productId)
+  function purchaseProduct(int32 _productId)
   payable
   forSale(_productId) 
   paidEnough(products[_productId].price) 
@@ -251,7 +251,7 @@ using SafeMath for uint256;
   /// @dev Withdraw The Store Balance.
   /// @param _storeId ID of Store to Withdraw 
   /// @return The Withdraw Done
-  function withdrawStoreBalance(int _storeId) 
+  function withdrawStoreBalance(int32 _storeId) 
   payable
 	onlyStoreOwner
   onlyOwnerOfThisStore(_storeId)

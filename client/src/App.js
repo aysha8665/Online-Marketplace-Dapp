@@ -112,6 +112,7 @@ class App extends Component {
   };
 
   checkUserRole = async () => {
+    try {
     //const { accounts, administeredContract } = this.state;
 
     // Stores a given value, 5 by default.
@@ -144,6 +145,13 @@ class App extends Component {
 
     // Update state with the result.
     //this.setState({ storageValue: response });
+  } catch (error) {
+    // Catch any errors for any of the above operations.
+    alert(
+      error,
+    );
+    console.error(error);
+  }
   };
   renderDashboard(){
     //switch() {
@@ -294,7 +302,8 @@ class App extends Component {
   async loadStores()
   {
     this.setState({loading:true});
-    const storesCount = await this.state.marketplaceContract.methods.getStoreCount().call();
+    let storesCount = await this.state.marketplaceContract.methods.getStoreCount().call();
+    console.log("storesCount");
       console.log(storesCount);
       for (var i = 0; i < storesCount; i++) {
         const store = await this.state.marketplaceContract.methods.getStore(i).call();
