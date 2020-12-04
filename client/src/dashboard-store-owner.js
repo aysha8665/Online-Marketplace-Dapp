@@ -8,6 +8,7 @@ class StoreOwnerDashboard extends Component {
 
           <h1>Store Owner Dashboard</h1>
           <h2>Manage Stores and Products</h2>
+          <h2>Add a Store</h2>
           <form onSubmit={(event) => {
             event.preventDefault()
             const storeName = this.storeName.value
@@ -27,11 +28,11 @@ class StoreOwnerDashboard extends Component {
           </form>
 
           <p>&nbsp;</p>
-        <h2>Remove Store Owners</h2>
+        <h2>Remove Stores</h2>
         <table className="table">
           <thead>
             <tr>
-              <th scope="col">Store Owner Address</th>
+              <th scope="col">Store List</th>
               <th scope="col"></th>
             </tr>
           </thead>
@@ -70,6 +71,7 @@ class StoreOwnerDashboard extends Component {
                     </td>
                     <td>
                       <h2>Manage Products</h2>
+                      <h2>Add a Products</h2>
           <form onSubmit={(event) => {
             event.preventDefault()
             const productName = this.productName.value

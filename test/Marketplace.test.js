@@ -71,6 +71,23 @@ describe('with existing Store', () => {
         assert.equal(result[2], storeOwner, 'the owner of the last added item does not match the expected value')
         assert.equal(result[3], 0, 'the balance of the item should be "0"')
     });
+    it('get Store Count.', async () => {
+      const result=await marketplace.getStoreCount()
+        //assert.equal(result[1], "StoreName", 'the name of the last added Store does not match the expected value')
+        console.log(result.toString())
+    });
+    it('add second store.', async () => {
+      tx=await marketplace.addStore("StoreName2", { from: storeOwner });
+      const result=await marketplace.getStore(1)
+        assert.equal(result[1], "StoreName2", 'the name of the last added Store does not match the expected value')
+        assert.equal(result[2], storeOwner, 'the owner of the last added item does not match the expected value')
+        assert.equal(result[3], 0, 'the balance of the item should be "0"')
+    });
+    it('get Store Count.', async () => {
+      let result=await marketplace.getStoreCount()
+        //assert.equal(result[1], "StoreName", 'the name of the last added Store does not match the expected value')
+        console.log(result.toString())
+    });
 });
 
 });

@@ -213,7 +213,7 @@ class App extends Component {
 
   };
 
-  addStore(name){
+  async addStore(name){
     this.setState({loading:true});
     console.log('name:', name)
     let result=this.state.marketplaceContract.methods.addStore(name).send({from:this.state.accounts[0]})
@@ -222,7 +222,6 @@ class App extends Component {
       console.log('receipt:',receipt)
       this.setState({ loading: false })
     })
-
   };
 
   removeStore(storeId){
@@ -296,13 +295,11 @@ class App extends Component {
   {
     this.setState({loading:true});
     const storesCount = await this.state.marketplaceContract.methods.getStoreCount().call();
-      //this.setState({ marketAdminsCount })
-      // Load products
       console.log(storesCount);
       for (var i = 0; i < storesCount; i++) {
         const store = await this.state.marketplaceContract.methods.getStore(i).call();
         this.setState({
-          storeOwners: [...this.state.stores, store]
+          stores: [...this.state.stores, store]
         })
       }
       console.log(this.state.stores)
