@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import $ from 'jquery';
-import AdministeredContract from "./contracts/Administered.json";
+//import AdministeredContract from "./contracts/Marketplace.json";
 import MarketplaceContract from "./contracts/Marketplace.json";
 import getWeb3 from "./getWeb3";
 
@@ -48,13 +48,13 @@ class App extends Component {
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
-      const deployedNetworkAdministeredContract = AdministeredContract.networks[networkId];
+      //const deployedNetworkAdministeredContract = AdministeredContract.networks[networkId];
       const deployedNetworkMarketplaceContract = MarketplaceContract.networks[networkId];
       
-      const administeredContractInstance = new web3.eth.Contract(
+     /*const administeredContractInstance = new web3.eth.Contract(
         AdministeredContract.abi,
         deployedNetworkAdministeredContract && deployedNetworkAdministeredContract.address,
-      );
+      );*/
 
       const marketplaceContractInstance = new web3.eth.Contract(
         MarketplaceContract.abi,
@@ -64,7 +64,7 @@ class App extends Component {
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
       this.setState({ web3, userRole:'user', accounts, 
-      administeredContract: administeredContractInstance,
+      administeredContract: marketplaceContractInstance,
       marketplaceContract:marketplaceContractInstance,
       marketAdmins:[],
       loading:true}, this.checkUserRole);
@@ -120,9 +120,14 @@ class App extends Component {
     //await contract.methods.set(5).send({ from: accounts[0] });
 
     // Get the value from the contract to prove it worked.
-    const isAdminTemp = await this.state.administeredContract.methods.isAdmin(this.state.accounts[0]).call();
-    const isMarketAdminTemp = await this.state.administeredContract.methods.isMarketAdmin(this.state.accounts[0]).call();
-    const isStoreOwnerTemp = await this.state.administeredContract.methods.isStoreOwner(this.state.accounts[0]).call();
+    //const isAdminTemp = await this.state.administeredContract.methods.isAdmin(this.state.accounts[0]).call();
+    //const isMarketAdminTemp = await this.state.administeredContract.methods.isMarketAdmin(this.state.accounts[0]).call();
+    //const isStoreOwnerTemp = await this.state.administeredContract.methods.isStoreOwner(this.state.accounts[0]).call();
+    
+    const isAdminTemp = await this.state.marketplaceContract.methods.isAdmin(this.state.accounts[0]).call();
+    const isMarketAdminTemp = await this.state.marketplaceContract.methods.isMarketAdmin(this.state.accounts[0]).call();
+    const isStoreOwnerTemp = await this.state.marketplaceContract.methods.isStoreOwner(this.state.accounts[0]).call();
+ 
     if(isAdminTemp)
     {
       this.setState({userRole:'admin'}, this.loadMarketAdmins);
@@ -185,7 +190,9 @@ class App extends Component {
 
   addMarketAdmin(accountAdddress){
     this.setState({loading:true});
-     this.state.administeredContract.methods.addMarketAdmin(accountAdddress).send({from:this.state.accounts[0]})
+    
+     //this.state.administeredContract.methods.addMarketAdmin(accountAdddress).send({from:this.state.accounts[0]})
+     this.state.marketplaceContract.methods.addMarketAdmin(accountAdddress).send({from:this.state.accounts[0]})
 
     .once('receipt', (receipt) => {
       
@@ -196,7 +203,8 @@ class App extends Component {
 
   removeMarketAdmin(accountAdddress){
     this.setState({loading:true});
-    this.state.administeredContract.methods.removeMarketAdmin(accountAdddress).send({from:this.state.accounts[0]})
+    //    this.state.administeredContract.methods.removeMarketAdmin(accountAdddress).send({from:this.state.accounts[0]})
+    this.state.marketplaceContract.methods.removeMarketAdmin(accountAdddress).send({from:this.state.accounts[0]})
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })
@@ -205,7 +213,9 @@ class App extends Component {
 
   addStoreOwner(accountAdddress){
     this.setState({loading:true});
-    this.state.administeredContract.methods.addStoreOwner(accountAdddress).send({from:this.state.accounts[0]})
+    //this.state.administeredContract.methods.addStoreOwner(accountAdddress).send({from:this.state.accounts[0]})
+    this.state.marketplaceContract.methods.addStoreOwner(accountAdddress).send({from:this.state.accounts[0]})
+
     .once('receipt', (receipt) => {
       
       this.setState({ loading: false })
@@ -215,7 +225,9 @@ class App extends Component {
 
   removeStoreOwner(accountAdddress){
     this.setState({loading:true});
-    this.state.administeredContract.methods.removeStoreOwner(accountAdddress).send({from:this.state.accounts[0]})
+    //this.state.administeredContract.methods.removeStoreOwner(accountAdddress).send({from:this.state.accounts[0]})
+    this.state.marketplaceContract.methods.removeStoreOwner(accountAdddress).send({from:this.state.accounts[0]})
+
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })
@@ -269,12 +281,17 @@ class App extends Component {
   async loadMarketAdmins()
   {
     this.setState({loading:true});
-    const marketAdminsCount = await this.state.administeredContract.methods.getMarketAdminsCount().call();
+    
+    //const marketAdminsCount = await this.state.administeredContract.methods.getMarketAdminsCount().call();
+
+    const marketAdminsCount = await this.state.marketplaceContract.methods.getMarketAdminsCount().call();
       //this.setState({ marketAdminsCount })
       // Load products
       console.log(marketAdminsCount);
       for (var i = 0; i < marketAdminsCount; i++) {
-        const marketAdminAddress = await this.state.administeredContract.methods.getMarketAdminMember(i).call();
+        //const marketAdminAddress = await this.state.administeredContract.methods.getMarketAdminMember(i).call();
+        const marketAdminAddress = await this.state.marketplaceContract.methods.getMarketAdminMember(i).call();
+
         this.setState({
           marketAdmins: [...this.state.marketAdmins, marketAdminAddress]
         })
@@ -286,12 +303,16 @@ class App extends Component {
   async loadStoreOwner()
   {
     this.setState({loading:true});
-    const storeOwnersCount = await this.state.administeredContract.methods.getStoreOwnersCount().call();
+    //const storeOwnersCount = await this.state.administeredContract.methods.getStoreOwnersCount().call();
+
+    const storeOwnersCount = await this.state.marketplaceContract.methods.getStoreOwnersCount().call();
       //this.setState({ marketAdminsCount })
       // Load products
       console.log(storeOwnersCount);
       for (var i = 0; i < storeOwnersCount; i++) {
-        const storeOwnerAddress = await this.state.administeredContract.methods.getStoreOwnerMember(i).call();
+        //const storeOwnerAddress = await this.state.administeredContract.methods.getStoreOwnerMember(i).call();
+        const storeOwnerAddress = await this.state.marketplaceContract.methods.getStoreOwnerMember(i).call();
+
         this.setState({
           storeOwners: [...this.state.storeOwners, storeOwnerAddress]
         })
@@ -320,7 +341,8 @@ class App extends Component {
   async loadStores()
   {
     this.setState({loading:true});
-    let storesCount = await this.state.marketplaceContract.methods.getStoreCount().call().then(console.log);
+    
+    const storesCount=await this.state.marketplaceContract.methods.getStoreCount().call();
     console.log("storesCount");
       console.log(storesCount);
       for (var i = 0; i < storesCount; i++) {
