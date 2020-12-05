@@ -42,7 +42,7 @@ using SafeMath for uint256;
     /* Here, set the owner as the person who instantiated the contract
        and set your idCount to 0. */
        //owner=msg.sender;
-       _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+     _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     //_setupRole(MARKET_ADMIN_ROLE, msg.sender);
     _setRoleAdmin(MARKET_ADMIN_ROLE, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(STORE_OWNER_ROLE, MARKET_ADMIN_ROLE);
