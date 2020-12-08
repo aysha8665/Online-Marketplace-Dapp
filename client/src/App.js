@@ -16,7 +16,6 @@ class App extends Component {
       web3: null, 
       userRole:'user',
       accounts: null, 
-      administeredContract: null,
       marketplaceContract: null,
       marketAdmins:[],
       storeOwners:[],
@@ -140,7 +139,7 @@ class App extends Component {
     }
     else if(isStoreOwnerTemp)
     {
-      this.setState({userRole:'storeOwner'}, this.loadStores);
+      this.setState({userRole:'storeOwner'}, this.loadStoreOwnerPanel);
       this.setState({ loading: false});
     }
     else
@@ -160,6 +159,7 @@ class App extends Component {
   }*/
   };
 
+
   renderDashboard(){
     //switch() {
       if(this.state.userRole==='admin')
@@ -177,7 +177,7 @@ class App extends Component {
         if(this.state.userRole==='storeOwner')
           return <StoreOwnerDashboard 
           stores={this.state.stores}
-          products={this.state.products}
+          marketplaceContract={this.state.marketplaceContract}
           addStore={this.addStore}
           removeStore={this.removeStore}
           addProduct={this.addProduct}
@@ -337,7 +337,10 @@ class App extends Component {
       console.log(this.state.storeOwners)
       this.setState({ loading: false})*/
   };
-
+async loadStoreOwnerPanel()
+{
+  this.loadStores();
+}
   async loadStores()
   {
     this.setState({loading:true});
@@ -354,6 +357,8 @@ class App extends Component {
       console.log(this.state.stores)
       this.setState({ loading: false})
   };
+
+ 
 
   render() {
     if (!this.state.web3) {

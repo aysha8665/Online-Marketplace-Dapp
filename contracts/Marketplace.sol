@@ -154,7 +154,7 @@ using SafeMath for uint256;
     public
     returns(bool)
   {
-    products[productCount] = Product({name: _name, id: productCount, price: _price, storeId:_storeId ,state: State.ForSale, seller: msg.sender, buyer: address(0)});
+    products[productCount] = Product({id: productCount, name: _name, price: _price, storeId:_storeId ,state: State.ForSale, seller: msg.sender, buyer: address(0)});
     emit LogProductAdded(productCount, _name,_price, _storeId);
     emit LogForSale(productCount);
     productCount += 1;
@@ -165,11 +165,12 @@ using SafeMath for uint256;
   /// @dev Get a product.
 	/// @param _productId ID of product to Get 
   function getProduct(int32 _productId)
-	view 
 	public
-	returns (string memory, uint256, int32) {
+  view
+	returns (int32,string memory, uint256, int32) {
 
-		return ( products[_productId].name,
+		return ( products[_productId].id,
+      products[_productId].name,
 				products[_productId].price,
 				products[_productId].storeId
         );
