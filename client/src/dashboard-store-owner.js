@@ -82,12 +82,12 @@ class StoreOwnerDashboard extends Component {
   </form>
 
 
-<h2>Remove Stores</h2>
+<h2>Stores</h2>
 <table className="table">
   <thead>
     <tr>
-      <th scope="col">Store List</th>
-      <th scope="col"></th>
+      <th scope="col">Name</th>
+      <th scope="col">Owner</th>
     </tr>
   </thead>
   <tbody id="storeList">
@@ -134,7 +134,6 @@ class StoreOwnerDashboard extends Component {
                   onClick={(event) => {
                     this.setState({ storeId: event.target.value},() => this.loadProducts())
                     this.showStore(event);
-                    
                   }}
                 >
                   Display Products
@@ -142,21 +141,13 @@ class StoreOwnerDashboard extends Component {
             }
             </td>
             <td>
-
-           
-
             </td>
         </tr>
-
       )
     })
   }
   </tbody>
-</table>
-
-
-
-    
+</table>  
 </div>;
   }
   else{
@@ -181,9 +172,6 @@ class StoreOwnerDashboard extends Component {
     this.props.addProduct(productName,productPrice,this.state.storeId)
     }}>
     <div className="form-group mr-sm-2">
-
-
-
     <input
       id={"productName"}
       type="text"
@@ -206,17 +194,17 @@ class StoreOwnerDashboard extends Component {
   <table className="tableProducts">
   <thead>
     <tr>
-      <th scope="col">Product List</th>
-      <th scope="col"></th>
+    <th scope="col">ID</th>
+      <th scope="col">Name</th>
+      <th scope="col">Price</th>
+      <th scope="col">StoreId</th>
     </tr>
   </thead>
   <tbody id="productList">
-
   { 
             this.state.products.map(product => {
               return(
                 <tr key={product[0]}>
-
                   <td>{product[0]}</td>
                   <td>{product[1]}</td>
                   <td>{product[2]}</td>
@@ -235,13 +223,9 @@ class StoreOwnerDashboard extends Component {
               )
           })
             }
-
     </tbody>
     </table>
-
-
-        </div>;
-
+     </div>;
   }
 }
 
