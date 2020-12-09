@@ -27,10 +27,8 @@ class UserDashboard extends Component {
     console.log("loadProducts");
     this.setState({loadingDashboard:true});
     const product2 = await this.props.marketplaceContract.methods.getProduct(0).call();
-    //
     console.log(product2);
     const productsCount=await this.props.marketplaceContract.methods.getProductCount().call();
-    //
     //.then(console.log)
     console.log("productsCount");
     console.log(productsCount);
@@ -39,8 +37,6 @@ class UserDashboard extends Component {
       console.log(this.state.storeId);
       for (var i = 0; i < productsCount; i++) {
         const product = await this.props.marketplaceContract.methods.getProduct(i).call();
-        console.log(product)
-        //console.log()
         if(product[3]==this.state.storeId && product[1].toString().length > 0 )
         {
           this.setState({
@@ -53,8 +49,6 @@ class UserDashboard extends Component {
   };
 
   renderUserDashboard(){
-    //console.log("renderStoreOwnerDashboard")
-    //console.log(this.state.store)
   if(this.state.store)
   {
    
@@ -153,11 +147,9 @@ class UserDashboard extends Component {
               )
           })
     }
-
     </tbody>
     </table>
-    </div>;
-
+    </div>
   }
 }
 

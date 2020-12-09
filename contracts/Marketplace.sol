@@ -233,21 +233,19 @@ using SafeMath for uint256;
   /// @param _productId ID of product to Purchase 
   /// @return The Product Purchased
   function purchaseProduct(int32 _productId)
+  public
   payable
   forSale(_productId) 
   paidEnough(products[_productId].price) 
   checkValue(_productId)
   whenNotPaused
-  nonReentrant
-  public
-  returns (bool)
   {
     products[_productId].buyer = msg.sender;
     products[_productId].state = State.Sold;
     stores[products[_productId].storeId].balance.add(msg.value);
     emit LogSold(_productId);
-    return true;
   }
+  //nonReentrant
 
   /// @dev Withdraw The Store Balance.
   /// @param _storeId ID of Store to Withdraw 

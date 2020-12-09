@@ -12,9 +12,6 @@ class StoreOwnerDashboard extends Component {
     this.setState({
       store: !this.state.store
     });
-
-    console.log("showStores");
-
     this.setState({loadingDashboard: false })
   };
 
@@ -23,15 +20,9 @@ class StoreOwnerDashboard extends Component {
     this.setState({
       products: []
     })
-
-    console.log("loadProducts");
     this.setState({loadingDashboard:true});
     const product2 = await this.props.marketplaceContract.methods.getProduct(0).call();
-    //
-    console.log(product2);
     const productsCount=await this.props.marketplaceContract.methods.getProductCount().call();
-    //
-    //.then(console.log)
     console.log("productsCount");
     console.log(productsCount);
 
@@ -39,8 +30,6 @@ class StoreOwnerDashboard extends Component {
       console.log(this.state.storeId);
       for (var i = 0; i < productsCount; i++) {
         const product = await this.props.marketplaceContract.methods.getProduct(i).call();
-        console.log(product)
-        //console.log()
         if(product[3]==this.state.storeId && product[1].toString().length > 0 )
         {
           this.setState({
@@ -48,13 +37,10 @@ class StoreOwnerDashboard extends Component {
           })
         }
       }
-      console.log(this.state.products)
       this.setState({ loadingDashboard: false})
   };
 
   renderStoreOwnerDashboard(){
-    //console.log("renderStoreOwnerDashboard")
-    //console.log(this.state.store)
   if(this.state.store)
   {
    
@@ -65,7 +51,6 @@ class StoreOwnerDashboard extends Component {
   <form onSubmit={(event) => {
     event.preventDefault()
     const storeName = this.storeName.value
-
     this.props.addStore(storeName)
     }}>
     <div className="form-group mr-sm-2">
@@ -76,7 +61,6 @@ class StoreOwnerDashboard extends Component {
       className="form-control"
       placeholder="Store Name"
       required />
-
     </div>
     <button type="submit" className="btn btn-primary">Add Store</button>
   </form>
