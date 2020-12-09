@@ -20,6 +20,10 @@ class StoreOwnerDashboard extends Component {
 
   async loadProducts()
   {
+    this.setState({
+      products: []
+    })
+
     console.log("loadProducts");
     this.setState({loadingDashboard:true});
     const product2 = await this.props.marketplaceContract.methods.getProduct(0).call();
@@ -37,7 +41,7 @@ class StoreOwnerDashboard extends Component {
         const product = await this.props.marketplaceContract.methods.getProduct(i).call();
         console.log(product)
         //console.log()
-        if(product[3]==this.state.storeId)
+        if(product[3]==this.state.storeId && product[1].toString().length > 0 )
         {
           this.setState({
             products: [...this.state.products, product]
@@ -218,10 +222,10 @@ class StoreOwnerDashboard extends Component {
                   <td>{product[2]}</td>
                   <td>{product[3]}</td>
                   <td>{ <button
-                    name={product[1]}
+                    name={this.state.storeId}
                     value={product[0]}
                         onClick={(event) => {
-                          this.props.removeProduct(event.target.value)
+                          this.props.removeProduct(event.target.value,event.target.name)
                         }}
                       >
                         Remove

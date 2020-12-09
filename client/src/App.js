@@ -261,9 +261,10 @@ class App extends Component {
     })
   };
 
-  removeProduct(productId){
+  removeProduct(productId,storeId){
     this.setState({loading:true});
-    this.state.marketplaceContract.methods.removeProduct(productId).send({from:this.state.accounts[0]})
+    console.log(productId);
+    this.state.marketplaceContract.methods.removeProduct(productId,storeId).send({from:this.state.accounts[0]})
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })
@@ -358,34 +359,7 @@ async loadStoreOwnerPanel()
       this.setState({ loading: false})
   };
 
-  async loadProducts()
-  {
-    //let StoresInstance = await App.contracts.Stores.deployed();
-    
-    console.log("loadProducts");
-    this.setState({loading:true});
-    const product2 = await this.state.marketplaceContract.methods.getProduct(1).call();
-    //.then(console.log)
-    console.log(product2);
-    const productsCount=await this.state.marketplaceContract.methods.getProductCount().call();
-    //let productsCount=
-    //.then(console.log)
-    console.log("productsCount");
-//      console.log(productsCount);
 
-      console.log(productsCount);
-
-      for (var i = 0; i < productsCount; i++) {
-        const product = await this.state.marketplaceContract.methods.getProduct(i).call();
-        if(product.storeId===0)
-        {
-          
-        }
-        console.log(product);
-      }
-      //console.log(this.state.products)
-      this.setState({ loading: false})
-  };
 
   render() {
     if (!this.state.web3) {
