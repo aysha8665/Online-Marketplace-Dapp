@@ -124,6 +124,16 @@ describe('with existing Products', () => {
       assert.equal(countResult.toString(), "2", 'the cout of the item should be "2"')
   });
 
+  it('Purchase a product.', async () => {
+
+    tx=await marketplace.purchaseProduct(0, { from: shopper });
+    if (tx.logs[0].event == "LogSold") {
+      eventEmittedLogSold = true
+    }
+    assert.equal(eventEmittedLogSold, true, 'Purchasing a product.should emit LogSold event')
+
+
+  });
 
 });
 
