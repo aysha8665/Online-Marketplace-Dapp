@@ -22,7 +22,7 @@ contract Administered is AccessControl{
     _;
   }
 
-    /// @dev Restricted to members of the MarketAdmin role.
+  /// @dev Restricted to members of the MarketAdmin role.
   modifier onlyMarketAdmin()
   {
     require(isMarketAdmin(msg.sender), "Restricted to MarketAdmin.");

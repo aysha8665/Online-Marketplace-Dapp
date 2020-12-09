@@ -22,32 +22,35 @@ class StoreOwnerDashboard extends Component {
   {
     console.log("loadProducts");
     this.setState({loadingDashboard:true});
-    const product2 = await this.props.marketplaceContract.methods.getProduct(1).call();
+    const product2 = await this.props.marketplaceContract.methods.getProduct(0).call();
+    //
     console.log(product2);
-    let productsCount=await this.props.marketplaceContract.methods.getProductCount().call();
+    const productsCount=await this.props.marketplaceContract.methods.getProductCount().call();
+    //
     //.then(console.log)
     console.log("productsCount");
-      console.log(productsCount);
+    console.log(productsCount);
 
       console.log("this.state.storeId");
       console.log(this.state.storeId);
       for (var i = 0; i < productsCount; i++) {
         const product = await this.props.marketplaceContract.methods.getProduct(i).call();
-        if(product.storeId===this.state.storeId)
+        console.log(product)
+        //console.log()
+        if(product[3]==this.state.storeId)
         {
           this.setState({
             products: [...this.state.products, product]
           })
         }
-
       }
       console.log(this.state.products)
       this.setState({ loadingDashboard: false})
   };
 
   renderStoreOwnerDashboard(){
-    console.log("renderStoreOwnerDashboard")
-    console.log(this.state.store)
+    //console.log("renderStoreOwnerDashboard")
+    //console.log(this.state.store)
   if(this.state.store)
   {
    
@@ -107,6 +110,7 @@ class StoreOwnerDashboard extends Component {
             <td></td>
           <td>
             { 
+
               <button
               name={store.name}
               value={store.id}
@@ -152,15 +156,12 @@ class StoreOwnerDashboard extends Component {
 </div>;
   }
   else{
-    return   <div id="product" className="text-center">
-
-
+    return  <div id="product">
 <h2>Manage Products</h2>
 <h2>Add a Products</h2>
 <div >
   <button onClick={(event) => {
                     this.showStore(event);
-                    
                   }}>
     close
   </button>
@@ -173,7 +174,7 @@ class StoreOwnerDashboard extends Component {
     const productPrice = this.productPrice.value
     console.log("add product")
   console.log(productName.toString()+"-"+productPrice.toString()+"-"+this.state.storeId)
-    this.props.addProduct(productName,productPrice,this.state.store)
+    this.props.addProduct(productName,productPrice,this.state.storeId)
     }}>
     <div className="form-group mr-sm-2">
 
@@ -197,34 +198,43 @@ class StoreOwnerDashboard extends Component {
     </div>
     <button type="submit" className="btn btn-primary">Add Product</button>
   </form>
-  <h2>Remove Products</h2>
-            <div id="productList">
-            { 
+  <h2>Products List</h2>
+  <table className="tableProducts">
+  <thead>
+    <tr>
+      <th scope="col">Product List</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody id="productList">
+
+  { 
             this.state.products.map(product => {
               return(
-                <div key={product}>
-                <div>{product}</div>
-                <div>
-                  { 
-                    <button
-                    name={product.name}
-                    value={product.id}
+                <tr key={product[0]}>
+
+                  <td>{product[0]}</td>
+                  <td>{product[1]}</td>
+                  <td>{product[2]}</td>
+                  <td>{product[3]}</td>
+                  <td>{ <button
+                    name={product[1]}
+                    value={product[0]}
                         onClick={(event) => {
                           this.props.removeProduct(event.target.value)
                         }}
                       >
                         Remove
                       </button>
-                    
-                  }
-                  </div>
-                  </div>
+                  }</td>
+                  </tr>
               )
-    
           })
             }
-                    
-        </div>
+
+    </tbody>
+    </table>
+
 
         </div>;
 

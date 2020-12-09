@@ -30,8 +30,8 @@ class App extends Component {
      this.removeStoreOwner = this.removeStoreOwner.bind(this)
      this.addStore = this.addStore.bind(this)
      this.removeStore = this.removeStore.bind(this)
-     this.addProduct = this.addStore.bind(this)
-     this.removeProduct = this.removeStore.bind(this)
+     this.addProduct = this.addProduct.bind(this)
+     this.removeProduct = this.removeProduct.bind(this)
      this.withdrawFromStore = this.withdrawFromStore.bind(this)
   }
  
@@ -146,7 +146,7 @@ class App extends Component {
     {
       this.setState({ loading: false});
     }
-    console.log(this.state.userRole);
+    //console.log(this.state.userRole);
 
     // Update state with the result.
     //this.setState({ storageValue: response });
@@ -158,7 +158,6 @@ class App extends Component {
     console.error(error);
   }*/
   };
-
 
   renderDashboard(){
     //switch() {
@@ -308,7 +307,7 @@ class App extends Component {
     const storeOwnersCount = await this.state.marketplaceContract.methods.getStoreOwnersCount().call();
       //this.setState({ marketAdminsCount })
       // Load products
-      console.log(storeOwnersCount);
+      //console.log(storeOwnersCount);
       for (var i = 0; i < storeOwnersCount; i++) {
         //const storeOwnerAddress = await this.state.administeredContract.methods.getStoreOwnerMember(i).call();
         const storeOwnerAddress = await this.state.marketplaceContract.methods.getStoreOwnerMember(i).call();
@@ -317,7 +316,7 @@ class App extends Component {
           storeOwners: [...this.state.storeOwners, storeOwnerAddress]
         })
       }
-      console.log(this.state.storeOwners)
+      //console.log(this.state.storeOwners)
       this.setState({ loading: false})
     /*
     this.setState({loading:true});
@@ -340,25 +339,53 @@ class App extends Component {
 async loadStoreOwnerPanel()
 {
   this.loadStores();
+  //this.loadProducts();
 }
   async loadStores()
   {
     this.setState({loading:true});
     
     const storesCount=await this.state.marketplaceContract.methods.getStoreCount().call();
-    console.log("storesCount");
-      console.log(storesCount);
+    //console.log("storesCount");
+     // console.log(storesCount);
       for (var i = 0; i < storesCount; i++) {
         const store = await this.state.marketplaceContract.methods.getStore(i).call();
         this.setState({
           stores: [...this.state.stores, store]
         })
       }
-      console.log(this.state.stores)
+     // console.log(this.state.stores)
       this.setState({ loading: false})
   };
 
- 
+  async loadProducts()
+  {
+    //let StoresInstance = await App.contracts.Stores.deployed();
+    
+    console.log("loadProducts");
+    this.setState({loading:true});
+    const product2 = await this.state.marketplaceContract.methods.getProduct(1).call();
+    //.then(console.log)
+    console.log(product2);
+    const productsCount=await this.state.marketplaceContract.methods.getProductCount().call();
+    //let productsCount=
+    //.then(console.log)
+    console.log("productsCount");
+//      console.log(productsCount);
+
+      console.log(productsCount);
+
+      for (var i = 0; i < productsCount; i++) {
+        const product = await this.state.marketplaceContract.methods.getProduct(i).call();
+        if(product.storeId===0)
+        {
+          
+        }
+        console.log(product);
+      }
+      //console.log(this.state.products)
+      this.setState({ loading: false})
+  };
 
   render() {
     if (!this.state.web3) {
