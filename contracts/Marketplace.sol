@@ -250,7 +250,7 @@ using SafeMath for uint256;
     return true;
   }
   //nonReentrant
-  //
+  //onlyOwnerOfThisStore(_storeId)
 
   /// @dev Withdraw The Store Balance.
   /// @param _storeId ID of Store to Withdraw 
@@ -258,7 +258,7 @@ using SafeMath for uint256;
   function withdrawStoreBalance(int32 _storeId) 
   payable
 	onlyStoreOwner
-  onlyOwnerOfThisStore(_storeId)
+  
 	whenNotPaused
   nonReentrant
 	public 

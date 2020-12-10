@@ -88,7 +88,7 @@ class StoreOwnerDashboard extends Component {
               name={store.name}
               value={store.id}
                   onClick={(event) => {
-                    this.props.withdrawStore(event.target.value)
+                    this.props.withdrawFromStore(event.target.value)
                   }}
                 >
                   Withdraw

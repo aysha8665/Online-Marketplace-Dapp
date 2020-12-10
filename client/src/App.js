@@ -163,6 +163,7 @@ class App extends Component {
           removeStore={this.removeStore}
           addProduct={this.addProduct}
           removeProduct={this.removeProduct}
+          withdrawFromStore={this.withdrawFromStore}
           />
           if(this.state.userRole==='user')
           return <UserDashboard 
@@ -257,9 +258,9 @@ class App extends Component {
       this.setState({ loading: false })
     })
   };
-  purchaseProduct(productId){
+  purchaseProduct(productId,productPrice){
     this.setState({loading:true});
-    this.state.marketplaceContract.methods.purchaseProduct(productId).send({from:this.state.accounts[0]})
+    this.state.marketplaceContract.methods.purchaseProduct(productId).send({from:this.state.accounts[0], value:productPrice})
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })

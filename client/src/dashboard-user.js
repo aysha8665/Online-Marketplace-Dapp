@@ -134,10 +134,10 @@ class UserDashboard extends Component {
                   <td>{product[2]}</td>
                   <td>{product[3]}</td>
                   <td>{ <button
-                    name={this.state.storeId}
+                    name={product[2]}
                     value={product[0]}
                         onClick={(event) => {
-                          this.props.purchaseProduct(event.target.value)
+                          this.props.purchaseProduct(event.target.value,event.target.name)
                         }}
                       >
                         Purchase

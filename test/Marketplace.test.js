@@ -4,6 +4,7 @@ let catchRevert = require("./exceptionsHelpers.js").catchRevert
 
 const { expect } = require('chai');
 let tx;
+let tx2;
 
 const Marketplace = artifacts.require("./Marketplace.sol")
 
@@ -90,7 +91,7 @@ describe('with existing Products', () => {
       await marketplace.addMarketAdmin(marketAdmin, { from: owner });
       await marketplace.addStoreOwner(storeOwner, { from: marketAdmin });
       await marketplace.addStore("StoreName3", { from: storeOwner });
-      tx=await marketplace.addProduct("ProductName0", 5, 1, { from: storeOwner });
+      tx=await marketplace.addProduct("ProductName0", price, 1, { from: storeOwner });
   });
   ///@test {Marketplace#LogStoreAdded}
   it('emit LogStoreAdded event.', async () => {
@@ -108,7 +109,7 @@ describe('with existing Products', () => {
     const result=await marketplace.getProduct(0)
     let countResult=await marketplace.getProductCount()
       assert.equal(result[1], "ProductName0", 'the name of the last added Product does not match the expected value')
-      assert.equal(result[2], 5, 'the price of the last added item does not match the expected value')
+      assert.equal(result[2], price, 'the price of the last added item does not match the expected value')
       assert.equal(result[3], 1, 'the store id of the item should be "0"')
       assert.equal(countResult.toString(), "1", 'the cout of the item should be "1"')
   });
@@ -126,12 +127,19 @@ describe('with existing Products', () => {
 
   it('Purchase a product.', async () => {
 
-    tx=await marketplace.purchaseProduct(0, { from: shopper });
+    tx=await marketplace.purchaseProduct(0, { from: shopper , value: price});
     if (tx.logs[0].event == "LogSold") {
       eventEmittedLogSold = true
     }
-    assert.equal(eventEmittedLogSold, true, 'Purchasing a product.should emit LogSold event')
 
+    tx2=await marketplace.withdrawStoreBalance(1, { from: storeOwner});
+    if (tx2.logs[0].event == "LogWithdrawStoreBalance") {
+      eventLogWithdrawStoreBalance = true
+    }
+
+
+    assert.equal(eventEmittedLogSold, true, 'Purchasing a product.should emit LogSold event')
+    assert.equal(eventLogWithdrawStoreBalance, true, 'withdrawing from Store.should emit LogWithdrawStoreBalance event')
 
   });
 
