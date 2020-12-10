@@ -51,7 +51,7 @@ describe('with existing Store', () => {
   beforeEach(async () => {
       await marketplace.addMarketAdmin(marketAdmin, { from: owner });
       await marketplace.addStoreOwner(storeOwner, { from: marketAdmin });
-      tx=await marketplace.addStore("StoreName", { from: storeOwner });
+      tx=await marketplace.addStore("StoreName0", { from: storeOwner });
   });
 
   ///@test {Marketplace#LogStoreAdded}
@@ -66,7 +66,7 @@ describe('with existing Store', () => {
     it('addStore adds an store.', async () => {
       const result=await marketplace.getStore(0)
       let countResult=await marketplace.getStoreCount()
-        assert.equal(result[1], "StoreName", 'the name of the last added Store does not match the expected value')
+        assert.equal(result[1], "StoreName0", 'the name of the last added Store does not match the expected value')
         assert.equal(result[2], storeOwner, 'the owner of the last added item does not match the expected value')
         assert.equal(result[3], 0, 'the balance of the item should be "0"')
         assert.equal(countResult.toString(), "1", 'the cout of the item should be "1"')
@@ -89,8 +89,8 @@ describe('with existing Products', () => {
   beforeEach(async () => {
       await marketplace.addMarketAdmin(marketAdmin, { from: owner });
       await marketplace.addStoreOwner(storeOwner, { from: marketAdmin });
-      await marketplace.addStore("StoreName", { from: storeOwner });
-      tx=await marketplace.addProduct("ProductName", 500, 0, { from: storeOwner });
+      await marketplace.addStore("StoreName3", { from: storeOwner });
+      tx=await marketplace.addProduct("ProductName0", 5, 1, { from: storeOwner });
   });
   ///@test {Marketplace#LogStoreAdded}
   it('emit LogStoreAdded event.', async () => {
@@ -107,9 +107,9 @@ describe('with existing Products', () => {
   it('addProduct adds a Product.', async () => {
     const result=await marketplace.getProduct(0)
     let countResult=await marketplace.getProductCount()
-      assert.equal(result[1], "ProductName", 'the name of the last added Product does not match the expected value')
-      assert.equal(result[2], 500, 'the price of the last added item does not match the expected value')
-      assert.equal(result[3], 0, 'the store id of the item should be "0"')
+      assert.equal(result[1], "ProductName0", 'the name of the last added Product does not match the expected value')
+      assert.equal(result[2], 5, 'the price of the last added item does not match the expected value')
+      assert.equal(result[3], 1, 'the store id of the item should be "0"')
       assert.equal(countResult.toString(), "1", 'the cout of the item should be "1"')
   });
 

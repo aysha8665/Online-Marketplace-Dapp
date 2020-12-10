@@ -84,7 +84,8 @@ using SafeMath for uint256;
     //refund them after pay for item (why it is before, _ checks for logic before func)
     _;
     uint256 _price = products[_productId].price;
-    uint256 amountToRefund = msg.value.sub(_price) ;
+    uint256 amountToRefund = msg.value - _price ;
+    //uint256 amountToRefund = msg.value.sub(_price) ;
     products[_productId].buyer.transfer(amountToRefund);
   }
   
@@ -231,6 +232,7 @@ using SafeMath for uint256;
 
   /// @dev Purchase a product.
   /// @param _productId ID of product to Purchase 
+  /// @return The Purchase Done
   function purchaseProduct(int32 _productId)
   public
   payable
@@ -238,13 +240,16 @@ using SafeMath for uint256;
   paidEnough(products[_productId].price) 
   checkValue(_productId)
   whenNotPaused
-  nonReentrant
+  returns(bool)
   {
     products[_productId].buyer = msg.sender;
     products[_productId].state = State.Sold;
-    stores[products[_productId].storeId].balance.add(msg.value);
+    stores[products[_productId].storeId].balance+=products[_productId].price;
+    //stores[products[_productId].storeId].balance.add(products[_productId].price);
     emit LogSold(_productId);
+    return true;
   }
+  //nonReentrant
   //
 
   /// @dev Withdraw The Store Balance.

@@ -10,6 +10,7 @@ import StoreOwnerDashboard from './dashboard-store-owner'
 import UserDashboard from './dashboard-user'
 
 class App extends Component {
+  
   constructor(props) {
     super(props)
     this.state = {
@@ -231,8 +232,10 @@ class App extends Component {
 
   };
 
-  addProduct(name,price,storeId){
+  async addProduct(name,price,storeId){
     this.setState({loading:true});
+    //const web3 = await getWeb3();
+    //web3.fromWei(
     this.state.marketplaceContract.methods.addProduct(name,price,storeId).send({from:this.state.accounts[0]})
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
