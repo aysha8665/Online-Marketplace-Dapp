@@ -11,6 +11,7 @@ import "./Administered.sol";
 contract Marketplace is Administered, Pausable, ReentrancyGuard{
 
 using SafeMath for uint256;
+
   struct Store{
 		int32 id; 
 		string name;
@@ -41,7 +42,6 @@ using SafeMath for uint256;
   {
     /* Here, set the owner as the person who instantiated the contract
        and set your idCount to 0. */
-       //owner=msg.sender;
      _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     //_setupRole(MARKET_ADMIN_ROLE, msg.sender);
     _setRoleAdmin(MARKET_ADMIN_ROLE, DEFAULT_ADMIN_ROLE);
@@ -91,7 +91,7 @@ using SafeMath for uint256;
   
   modifier onlyOwnerOfThisStore(int32 _storeId)
   {
-    require(stores[_storeId].owner == msg.sender, "Restricted to StoreOwner.");
+    require(stores[_storeId].owner == msg.sender, "Restricted to onlyOwnerOfThisStore.");
     _;
   }
 
@@ -102,14 +102,12 @@ using SafeMath for uint256;
   onlyStoreOwner
   whenNotPaused
   public
-  //returns(bool)
+  returns(bool)
   {
     stores[storeCount] = Store({ id: storeCount,name: _name, owner: msg.sender, balance: 0});
-    
-    storeCount+=1;
-    //storeCount.add(1);
+    ++storeCount;
     emit LogStoreAdded(storeCount, _name, msg.sender, 0);
-    //return true;
+    return true;
   }
   
   /// @dev Get Store Count.
@@ -158,8 +156,7 @@ using SafeMath for uint256;
     products[productCount] = Product({id: productCount, name: _name, price: _price, storeId:_storeId ,state: State.ForSale, seller: msg.sender, buyer: address(0)});
     emit LogProductAdded(productCount, _name,_price, _storeId);
     emit LogForSale(productCount);
-    productCount += 1;
-    //productCount = productCount.add(1);
+    ++productCount;
     return true;
   }
 
@@ -168,12 +165,13 @@ using SafeMath for uint256;
   function getProduct(int32 _productId)
 	public
   view
-	returns (int32,string memory, uint256, int32) {
+	returns (int32,string memory, uint256, int32,State) {
 
 		return ( products[_productId].id,
       products[_productId].name,
 				products[_productId].price,
-				products[_productId].storeId
+				products[_productId].storeId,
+        products[_productId].state
         );
 	}
 
@@ -240,6 +238,7 @@ using SafeMath for uint256;
   paidEnough(products[_productId].price) 
   checkValue(_productId)
   whenNotPaused
+  nonReentrant
   returns(bool)
   {
     products[_productId].buyer = msg.sender;
@@ -249,8 +248,7 @@ using SafeMath for uint256;
     emit LogSold(_productId);
     return true;
   }
-  //nonReentrant
-  //onlyOwnerOfThisStore(_storeId)
+
 
   /// @dev Withdraw The Store Balance.
   /// @param _storeId ID of Store to Withdraw 
@@ -270,6 +268,9 @@ using SafeMath for uint256;
 		emit LogWithdrawStoreBalance(_storeId, storeBalance);
 		return true;
 	}
+
+ /// @dev Get Contract Balance.
+  /// @return Contract Balance
 function getBalance() 
 public
 view
