@@ -3,8 +3,22 @@ const makeInterfaceId = require('@openzeppelin/test-helpers/src/makeInterfaceId'
 let catchRevert = require("./exceptionsHelpers.js").catchRevert
 
 const { expect } = require('chai');
-let tx;
-let tx2;
+
+// Needed for getBalance 
+const promisify = (inner) =>
+  new Promise((resolve, reject) =>
+    inner((err, res) => {
+      if (err) { reject(err) }
+      resolve(res);
+    })
+  );
+
+
+// Get an account's balance 
+const getBalance = (account, at) =>
+  promisify(cb => web3.eth.getBalance(account, at, cb));
+let receipt;
+let receipt2;
 
 const Marketplace = artifacts.require("./Marketplace.sol")
 
@@ -52,12 +66,12 @@ describe('with existing Store', () => {
   beforeEach(async () => {
       await marketplace.addMarketAdmin(marketAdmin, { from: owner });
       await marketplace.addStoreOwner(storeOwner, { from: marketAdmin });
-      tx=await marketplace.addStore("StoreName0", { from: storeOwner });
+      receipt=await marketplace.addStore("StoreName0", { from: storeOwner });
   });
 
   ///@test {Marketplace#LogStoreAdded}
   it('emit LogStoreAdded event.', async () => {
-    if (tx.logs[0].event == "LogStoreAdded") {
+    if (receipt.logs[0].event == "LogStoreAdded") {
       eventEmitted = true
     }
     assert.equal(eventEmitted, true, 'adding an Store should emit LogStoreAdded event')
@@ -74,7 +88,7 @@ describe('with existing Store', () => {
     });
 
     it('add second store.', async () => {
-      tx=await marketplace.addStore("StoreName2", { from: storeOwner });
+      receipt=await marketplace.addStore("StoreName2", { from: storeOwner });
       const result=await marketplace.getStore(1)
       let countResult=await marketplace.getStoreCount()
       //console.log(result)
@@ -91,14 +105,16 @@ describe('with existing Products', () => {
       await marketplace.addMarketAdmin(marketAdmin, { from: owner });
       await marketplace.addStoreOwner(storeOwner, { from: marketAdmin });
       await marketplace.addStore("StoreName3", { from: storeOwner });
-      tx=await marketplace.addProduct("ProductName0", price, 1, { from: storeOwner });
+      receipt=await marketplace.addProduct("ProductName0", price, 1, { from: storeOwner });
+
+      
   });
   ///@test {Marketplace#LogStoreAdded}
   it('emit LogStoreAdded event.', async () => {
-    if (tx.logs[0].event == "LogProductAdded") {
+    if (receipt.logs[0].event == "LogProductAdded") {
       eventEmittedLogProductAdded = true
     }
-    if (tx.logs[1].event == "LogForSale") {
+    if (receipt.logs[1].event == "LogForSale") {
       eventEmittedLogForSale = true
     }
     assert.equal(eventEmittedLogProductAdded, true, 'adding an Product should emit LogProductAdded event')
@@ -115,7 +131,7 @@ describe('with existing Products', () => {
   });
 
   it('add second Product.', async () => {
-    tx=await marketplace.addProduct("ProductName2", 1000, 0, { from: storeOwner });
+    receipt=await marketplace.addProduct("ProductName2", 1000, 0, { from: storeOwner });
     const result=await marketplace.getProduct(1)
     let countResult=await marketplace.getProductCount()
     //console.log(result)
@@ -127,20 +143,60 @@ describe('with existing Products', () => {
 
   it('Purchase a product.', async () => {
 
-    tx=await marketplace.purchaseProduct(0, { from: shopper , value: price});
-    if (tx.logs[0].event == "LogSold") {
+	
+    let initialBalance = await getBalance(shopper);
+    receipt=await marketplace.purchaseProduct(0, { from: shopper , value: price});
+
+		let finalBalance = await getBalance(shopper);
+		let gasUsed = receipt.receipt.gasUsed;
+		let tx = await web3.eth.getTransaction(receipt.tx);
+		let gasPrice = tx.gasPrice;
+		let gasCost = gasUsed * gasPrice;
+
+    
+	//let balance = await marketplace.getStorefrontBalance(storefrontId);
+		//assert.equal(balance, productPrice);
+
+		let contractBalance = await marketplace.getBalance();
+		assert.equal(contractBalance, price);
+
+
+    if (receipt.logs[0].event == "LogSold") {
       eventEmittedLogSold = true
     }
 
-    tx2=await marketplace.withdrawStoreBalance(1, { from: storeOwner});
-    if (tx2.logs[0].event == "LogWithdrawStoreBalance") {
+    assert.equal(eventEmittedLogSold, true, 'Purchasing a product.should emit LogSold event')
+    assert.equal(Number(initialBalance)-price-gasCost, Number(finalBalance));  
+  });
+
+  it('withdraw from store.', async () => {
+
+    receipt=await marketplace.purchaseProduct(0, { from: shopper , value: price});
+
+    let initialBalance = await getBalance(storeOwner);
+    receipt2=await marketplace.withdrawStoreBalance(1, { from: storeOwner});
+		let finalBalance = await getBalance(storeOwner);
+		let gasUsed = receipt2.receipt.gasUsed;
+		let tx = await web3.eth.getTransaction(receipt2.tx);
+		let gasPrice = tx.gasPrice;
+		let gasCost = gasUsed * gasPrice;
+
+   
+    if (receipt.logs[0].event == "LogSold") {
+      eventEmittedLogSold = true
+    }
+
+    
+    if (receipt2.logs[0].event == "LogWithdrawStoreBalance") {
       eventLogWithdrawStoreBalance = true
     }
 
 
     assert.equal(eventEmittedLogSold, true, 'Purchasing a product.should emit LogSold event')
     assert.equal(eventLogWithdrawStoreBalance, true, 'withdrawing from Store.should emit LogWithdrawStoreBalance event')
-
+    assert.equal(Number(initialBalance) + Number(price) - Number(gasCost), Number(finalBalance));
+  
+  
   });
 
 });

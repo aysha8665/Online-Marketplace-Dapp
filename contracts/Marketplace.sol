@@ -256,12 +256,11 @@ using SafeMath for uint256;
   /// @param _storeId ID of Store to Withdraw 
   /// @return The Withdraw Done
   function withdrawStoreBalance(int32 _storeId) 
+  public 
   payable
 	onlyStoreOwner
-  
 	whenNotPaused
   nonReentrant
-	public 
   returns (bool)
   {
 		require(stores[_storeId].balance > 0);
@@ -271,5 +270,13 @@ using SafeMath for uint256;
 		emit LogWithdrawStoreBalance(_storeId, storeBalance);
 		return true;
 	}
+function getBalance() 
+public
+view
+returns (uint256)
+{
+    return address(this).balance;
+}
+  
 
 }
