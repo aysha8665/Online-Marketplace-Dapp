@@ -37,7 +37,7 @@ class UserDashboard extends Component {
       console.log(this.state.storeId);
       for (var i = 0; i < productsCount; i++) {
         const product = await this.props.marketplaceContract.methods.getProduct(i).call();
-        if(product[3]==this.state.storeId && product[1].toString().length > 0 )
+        if(product[3]===this.state.storeId && product[1].toString().length > 0 )
         {
           this.setState({
             products: [...this.state.products, product]
@@ -126,6 +126,7 @@ class UserDashboard extends Component {
   <tbody id="productList">
   { 
             this.state.products.map(product => {
+              console.log(product[3])
               return(
                 <tr key={product[0]}>
 

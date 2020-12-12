@@ -21,7 +21,6 @@ class StoreOwnerDashboard extends Component {
       products: []
     })
     this.setState({loadingDashboard:true});
-    const product2 = await this.props.marketplaceContract.methods.getProduct(0).call();
     const productsCount=await this.props.marketplaceContract.methods.getProductCount().call();
     console.log("productsCount");
     console.log(productsCount);
@@ -30,7 +29,7 @@ class StoreOwnerDashboard extends Component {
       console.log(this.state.storeId);
       for (var i = 0; i < productsCount; i++) {
         const product = await this.props.marketplaceContract.methods.getProduct(i).call();
-        if(product[3]==this.state.storeId && product[1].toString().length > 0 )
+        if(product[3]===this.state.storeId && product[1].toString().length > 0 )
         {
           this.setState({
             products: [...this.state.products, product]
@@ -77,57 +76,61 @@ class StoreOwnerDashboard extends Component {
   <tbody id="storeList">
     { 
       this.props.stores.map(store => {
-      return(
-        <tr key={store.id}>
-          <td>{store.name}</td>
-          <td>{store.owner}</td>
-          <td>{store.balance}</td>
-          <td>
-            { 
-              <button
-              name={store.name}
-              value={store.id}
-                  onClick={(event) => {
-                    this.props.withdrawFromStore(event.target.value)
-                  }}
-                >
-                  Withdraw
-                </button>
-            }
-            </td>
-            <td></td>
-          <td>
-            { 
+        if(store.owner===this.props.accountAddress)
+        {
+          return(
+            <tr key={store.id}>
+              <td>{store.name}</td>
+              <td>{store.owner}</td>
+              <td>{store.balance}</td>
+              <td>
+                { 
+                  <button
+                  name={store.name}
+                  value={store.id}
+                      onClick={(event) => {
+                        this.props.withdrawFromStore(event.target.value)
+                      }}
+                    >
+                      Withdraw
+                    </button>
+                }
+                </td>
+                <td></td>
+              <td>
+                { 
+    
+                  <button
+                  name={store.name}
+                  value={store.id}
+                      onClick={(event) => {
+                        this.props.removeStore(event.target.value)
+                      }}
+                    >
+                      Remove
+                    </button>
+                }
+                </td>
+                <td>
+                { 
+                  <button
+                  name={store.name}
+                  value={store.id}
+                      onClick={(event) => {
+                        this.setState({ storeId: event.target.value},() => this.loadProducts())
+                        this.showStore(event);
+                      }}
+                    >
+                      Display Products
+                    </button>
+                }
+                </td>
+                <td>
+                </td>
+            </tr>
+          )
+        }
 
-              <button
-              name={store.name}
-              value={store.id}
-                  onClick={(event) => {
-                    this.props.removeStore(event.target.value)
-                  }}
-                >
-                  Remove
-                </button>
-            }
-            </td>
-            <td>
-            { 
-              <button
-              name={store.name}
-              value={store.id}
-                  onClick={(event) => {
-                    this.setState({ storeId: event.target.value},() => this.loadProducts())
-                    this.showStore(event);
-                  }}
-                >
-                  Display Products
-                </button>
-            }
-            </td>
-            <td>
-            </td>
-        </tr>
-      )
     })
   }
   </tbody>

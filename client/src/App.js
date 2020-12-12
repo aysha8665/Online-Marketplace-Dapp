@@ -62,42 +62,11 @@ class App extends Component {
       administeredContract: marketplaceContractInstance,
       marketplaceContract:marketplaceContractInstance,
       marketAdmins:[],
-      loading:true}, this.checkUserRole);
+      loading:true}, this.checkUserRole); 
+
+
 
 /*
-      var addMarketAdminEvent = this.state.administeredContract.RoleGranted();
-      addMarketAdminEvent.watch(function(error, result){
-        if (!error)
-            {
-                //$("#loader").hide();
-                $("#eventsLog").html(result.args.role + '-' + result.args.account + '-'+ result.args._msgSender);
-            } else {
-                //$("#loader").hide();
-                console.log(error);
-            }
-            */
-           /*marketplaceContractInstance.events.LogStoreAdded.watch(function(error, result){
-             if (!error)
-                 {
-                     //$("#loader").hide();
-                     $("#eventsLog").html(result.args.role + '-' + result.args.account + '-'+ result.args._msgSender);
-                 } else {
-                     //$("#loader").hide();
-                     console.log(error);
-                 }
-
-
-    })*/
-
-    /*marketplaceContractInstance.getPastEvents('LogStoreAdded', {
-      filter: {myIndexedParam: [20,23], myOtherIndexedParam: '0x123456789...'}, // Using an array means OR: e.g. 20 or 23
-      fromBlock: 0,
-      toBlock: 'latest'
-  }, function(error, events){ console.log(events); })
-  .then(function(events){
-      console.log(events) // same results as the optional callback above
-  });*/
-      /*
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -164,6 +133,7 @@ class App extends Component {
           addProduct={this.addProduct}
           removeProduct={this.removeProduct}
           withdrawFromStore={this.withdrawFromStore}
+          accountAddress={this.state.accounts[0]}
           />
           if(this.state.userRole==='user')
           return <UserDashboard 
@@ -196,6 +166,7 @@ class App extends Component {
     this.setState({loading:true});
     this.state.marketplaceContract.methods.addStoreOwner(accountAdddress).send({from:this.state.accounts[0]})
 
+      
     .once('receipt', (receipt) => {
       
       this.setState({ loading: false })
