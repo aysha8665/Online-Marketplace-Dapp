@@ -29,7 +29,7 @@ contract('Marketplace', function (accounts) {
   const MARKET_ADMIN_ROLE = web3.utils.soliditySha3('MARKET_ADMIN_ROLE');
   const STORE_OWNER = web3.utils.soliditySha3('STORE_OWNER');
   let marketplace;
-  const price = "1000"
+  const price = "10"
   const name = "book"
 
   beforeEach(async function () {
@@ -47,7 +47,7 @@ contract('Marketplace', function (accounts) {
   });
 
 
-  ///@test {Marketplace#addProduct}
+  ///@test{Marketplace#addProduct}
 
   it('addProduct throws if not called by an storeOwner account.', async () => {
     await marketplace.addMarketAdmin(marketAdmin, { from: owner });

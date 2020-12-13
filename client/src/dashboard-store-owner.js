@@ -61,11 +61,11 @@ class StoreOwnerDashboard extends Component {
       placeholder="Store Name"
       required />
     </div>
-    <button type="submit" className="btn btn-primary">Add Store</button>
+    <button type="submit" className="btn btn-primary">Add a Store</button>
   </form>
 
 
-<h2>Stores</h2>
+<h2>Store  list</h2>
 <table className="table">
   <thead>
     <tr>

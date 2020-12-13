@@ -25,7 +25,7 @@ class MarketAdminDashboard extends Component {
           </form>
 
           <p>&nbsp;</p>
-        <h2>Remove Store Owners</h2>
+        <h2>Store Owner List</h2>
         <table className="table">
           <thead>
             <tr>

@@ -25,7 +25,7 @@ class AdminDashboard extends Component {
           </form>
 
           <p>&nbsp;</p>
-        <h2>Remove Market Admin</h2>
+        <h2>Market Admin List</h2>
         <table className="table">
           <thead>
             <tr>

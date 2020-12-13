@@ -1,5 +1,6 @@
 pragma solidity >=0.5.16 <0.8.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
+
 contract Administered is AccessControl{
 
   bytes32 public constant MARKET_ADMIN_ROLE = keccak256("MARKET_ADMIN_ROLE");
@@ -64,7 +65,8 @@ contract Administered is AccessControl{
   /// @dev Add an account to the admin role. Restricted to admins.
   /// @param account address of account to Add as Admin.
   function addAdmin(address account)
-    public virtual onlyAdmin
+    public virtual 
+    onlyAdmin
   {
     grantRole(DEFAULT_ADMIN_ROLE, account);
   }
@@ -72,7 +74,8 @@ contract Administered is AccessControl{
   /// @dev Add an account to the admin role. Restricted to admins.
   /// @param account address of account to to Add as MarketAdmin.
   function addMarketAdmin(address account)
-    public virtual onlyAdmin
+    public virtual 
+    onlyAdmin
   {
     grantRole(MARKET_ADMIN_ROLE, account);
   }
@@ -80,7 +83,8 @@ contract Administered is AccessControl{
    /// @dev Add an account to the user role. Restricted to MarketAdmins.
    /// @param account address of account to Add as StoreOwner.
   function addStoreOwner(address account)
-    public virtual onlyMarketAdmin
+    public virtual 
+    onlyMarketAdmin
   {
     grantRole(STORE_OWNER_ROLE, account);
   }
@@ -96,7 +100,8 @@ contract Administered is AccessControl{
   /// @dev Remove an account from the MarketAdmin role. Restricted to admins.
   /// @param account address of account to Remove.
   function removeMarketAdmin(address account)
-    public virtual onlyAdmin
+    public virtual 
+    onlyAdmin
   {
     revokeRole(MARKET_ADMIN_ROLE, account);
   }
@@ -104,7 +109,8 @@ contract Administered is AccessControl{
   /// @dev Remove an account from the StoreOwner role. Restricted to MarketAdmins.
   /// @param account address of account to Remove.
   function removeStoreOwner(address account)
-    public virtual onlyMarketAdmin
+    public virtual 
+    onlyMarketAdmin
   {
     revokeRole(STORE_OWNER_ROLE, account);
   }
