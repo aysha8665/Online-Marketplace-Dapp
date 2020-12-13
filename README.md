@@ -41,5 +41,8 @@ All tests should pass, but tests that involve buying products sometimes fail bec
 
 Each of the two contracts has `.sol` and `.js` tests, all located under `/test`.
 
+## Recording
+https://drive.google.com/file/d/1I-y7s-McjxmBAaJefTYT2Clao-tp8Awz/view?usp=sharing
+
 
 
