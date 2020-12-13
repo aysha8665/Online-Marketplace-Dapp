@@ -126,7 +126,6 @@ class UserDashboard extends Component {
   <tbody id="productList">
   { 
             this.state.products.map(product => {
-              console.log(product[3])
               return(
                 <tr key={product[0]}>
 
@@ -134,7 +133,9 @@ class UserDashboard extends Component {
                   <td>{product[1]}</td>
                   <td>{product[2]}</td>
                   <td>{product[3]}</td>
-                  <td>{ <button
+                  <td>{ 
+                  product[4]==1?<div>sold</div>
+                  :<button
                     name={product[2]}
                     value={product[0]}
                         onClick={(event) => {

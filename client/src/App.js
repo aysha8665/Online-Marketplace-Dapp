@@ -223,6 +223,8 @@ class App extends Component {
     })
   };
   withdrawFromStore(storeId){
+    console.log("storeId")
+    console.log(storeId)
     this.setState({loading:true});
     this.state.marketplaceContract.methods.withdrawStoreBalance(storeId).send({from:this.state.accounts[0]})
     .once('receipt', (receipt) => {
@@ -231,7 +233,7 @@ class App extends Component {
   };
   purchaseProduct(productId,productPrice){
     this.setState({loading:true});
-    this.state.marketplaceContract.methods.purchaseProduct(productId).send({from:this.state.accounts[0], value:productPrice})
+    this.state.marketplaceContract.methods.purchaseProduct(productId).send({from:this.state.accounts[0], value:this.state.web3.utils.toWei(productPrice)})
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })

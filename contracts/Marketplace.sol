@@ -97,7 +97,7 @@ using SafeMath for uint256;
 
   /// @dev Add a Store.
 	/// @param _name Name of Store to Add 
-  
+  /// @return The store added
   function addStore(string memory _name)
   onlyStoreOwner
   whenNotPaused
